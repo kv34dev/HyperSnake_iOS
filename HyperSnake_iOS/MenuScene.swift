@@ -3,16 +3,17 @@ import SpriteKit
 class MenuScene: SKScene {
     
     let snakeColors: [UIColor] = [
-        UIColor(red: 1, green: 0.27, blue: 0.27, alpha: 1),
-        UIColor(red: 1, green: 0.59, blue: 0.23, alpha: 1),
-        UIColor(red: 1, green: 0.88, blue: 0.31, alpha: 1),
-        UIColor(red: 0.22, green: 1, blue: 0.08, alpha: 1),
-        UIColor.cyan,
-        UIColor(red: 0, green: 0.47, blue: 1, alpha: 1),
-        UIColor(red: 0.71, green: 0.35, blue: 1, alpha: 1),
-        UIColor(red: 1, green: 0.39, blue: 0.78, alpha: 1),
-        UIColor.white
+        UIColor(red: 1, green: 0.27, blue: 0.27, alpha: 1),   // Red
+        UIColor(red: 0.22, green: 1, blue: 0.08, alpha: 1),   // Green
+        UIColor(red: 0.71, green: 0.35, blue: 1, alpha: 1),   // Purple
+        UIColor(red: 1, green: 0.59, blue: 0.23, alpha: 1),   // Orange
+        UIColor.cyan,                                         // Cyan
+        UIColor(red: 1, green: 0.39, blue: 0.78, alpha: 1),   // Pink
+        UIColor(red: 1, green: 0.88, blue: 0.31, alpha: 1),   // Yellow
+        UIColor(red: 0, green: 0.47, blue: 1, alpha: 1),      // Blue
+        UIColor.white                                         // White
     ]
+
     
     let difficulties: [String] = ["Easy", "Normal", "Hard"]
     let difficultySpeeds: [CGFloat] = [0.20, 0.14, 0.08]
@@ -42,6 +43,7 @@ class MenuScene: SKScene {
         highlightSelectedDifficulty()
     }
     
+    //MARK: colors
     func drawColorButtons() {
         colorBoxes.removeAll()
         
@@ -56,7 +58,7 @@ class MenuScene: SKScene {
         let totalHeight = CGFloat(rows) * boxHeight + CGFloat(rows - 1) * spacing
         
         let startX = (size.width - totalWidth) / 2 + boxWidth/2
-        let startY = size.height - 260  // выше, чем было
+        let startY = size.height - 230  // высота
         
         for i in 0..<snakeColors.count {
             let col = i % columns
@@ -82,12 +84,13 @@ class MenuScene: SKScene {
         }
     }
     
+    //MARK: dificulty
     func drawDifficultyButtons() {
         difficultyLabels.removeAll()
         difficultyUnderlines.removeAll()
         
         let spacing: CGFloat = 45
-        var y = size.height/2 - 80   // немного выше
+        var y = size.height/2 - 130   //высота
         
         for i in 0..<difficulties.count {
             let label = SKLabelNode(text: difficulties[i])
@@ -101,7 +104,7 @@ class MenuScene: SKScene {
             let underline = SKShapeNode(rectOf: CGSize(width: label.frame.width, height: 3))
             underline.fillColor = .white
             underline.strokeColor = .clear
-            underline.position = CGPoint(x: size.width/2, y: y - 18)
+            underline.position = CGPoint(x: size.width/2, y: y - 5)
             addChild(underline)
             difficultyUnderlines.append(underline)
             
@@ -115,6 +118,7 @@ class MenuScene: SKScene {
         }
     }
     
+    //MARK: START
     func drawStartButton() {
         let btn = SKShapeNode(rectOf: CGSize(width: 240, height: 70), cornerRadius: 20)
         btn.fillColor = UIColor(red: 0.27, green: 0.55, blue: 1.0, alpha: 1)
@@ -130,6 +134,7 @@ class MenuScene: SKScene {
         btn.addChild(text)
     }
     
+    //touch
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let t = touches.first else { return }
         let loc = t.location(in: self)
