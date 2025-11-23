@@ -2,124 +2,136 @@ import SpriteKit
 
 class GameScene: SKScene {
     
-    var snake: [(Int, Int)] = []
-    var direction = (x: 1, y: 0)
-    var cellSize = 25
-    var speedValue = 7
-    var tickTime: TimeInterval = 0
+    let cell: CGFloat = 25
+    var snake: [CGPoint] = []
+    var direction = CGVector(dx: 25, dy: 0)
+    var food: SKShapeNode!
     
-    var food: (Int, Int)?
+    var snakeColor: UIColor
+    var moveDelay: CGFloat
+    var lastMove: TimeInterval = 0
+    
     var score = 0
+    var scoreLabel = SKLabelNode()
+    var gameOver = false
     
-    var snakeColor = UIColor.green
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let t = touches.first else { return }
-        let start = t.previousLocation(in: self)
-        let end = t.location(in: self)
-        
-        let dx = end.x - start.x
-        let dy = end.y - start.y
-        
-        if abs(dx) > abs(dy) {
-            if dx > 0 { setDirection(dx: 1, dy: 0) }
-            else { setDirection(dx: -1, dy: 0) }
-        } else {
-            if dy > 0 { setDirection(dx: 0, dy: 1) }
-            else { setDirection(dx: 0, dy: -1) }
-        }
+    init(size: CGSize, snakeColor: UIColor, speed: CGFloat) {
+        self.snakeColor = snakeColor
+        self.moveDelay = speed
+        super.init(size: size)
     }
+    required init?(coder: NSCoder) { fatalError() }
     
     override func didMove(to view: SKView) {
-        backgroundColor = UIColor(red: 20/255, green: 20/255, blue: 28/255, alpha: 1)
+        backgroundColor = UIColor(red: 0.08, green: 0.08, blue: 0.11, alpha: 1)
         
-        score = 0
-        tickTime = 0
+        scoreLabel.fontName = "Arial-BoldMT"
+        scoreLabel.fontSize = 32
+        scoreLabel.position = CGPoint(x: 80, y: size.height - 60)
+        scoreLabel.text = "Score: 0"
+        addChild(scoreLabel)
         
-        snake = [(350, 350)]
+        let startX = size.width / 2
+        let startY = size.height / 2
+        
+        snake = [CGPoint(x: startX, y: startY)]
         
         spawnFood()
     }
     
     func spawnFood() {
-        let x = Int.random(in: 0..<28) * cellSize
-        let y = Int.random(in: 0..<28) * cellSize
-        food = (x,y)
+        food?.removeFromParent()
+        
+        let x = CGFloat(Int.random(in: 0..<Int(size.width / cell))) * cell
+        let y = CGFloat(Int.random(in: 0..<Int(size.height / cell))) * cell
+        
+        food = SKShapeNode(rectOf: CGSize(width: cell, height: cell), cornerRadius: 6)
+        food.fillColor = UIColor(red: 1, green: 0.27, blue: 0.27, alpha: 1)
+        food.position = CGPoint(x: x, y: y)
+        addChild(food)
     }
     
     override func update(_ currentTime: TimeInterval) {
-        if currentTime - tickTime < (0.1 * (7.0 / Double(speedValue))) { return }
-        tickTime = currentTime
+        if gameOver { return }
         
-        moveSnake()
-        draw()
+        if currentTime - lastMove >= moveDelay {
+            lastMove = currentTime
+            moveSnake()
+        }
     }
     
     func moveSnake() {
-        guard let head = snake.first else { return }
+        let head = snake.first!
+        let newHead = CGPoint(x: head.x + direction.dx, y: head.y + direction.dy)
         
-        let newHead = (
-            head.0 + direction.x * cellSize,
-            head.1 + direction.y * cellSize
-        )
-        
-        // Столкновения
-        if newHead.0 < 0 || newHead.0 >= 700 ||
-           newHead.1 < 0 || newHead.1 >= 700 ||
-           snake.contains(where: { $0 == newHead }) {
-            gameOver()
+        if newHead.x < 0 || newHead.y < 0 || newHead.x >= size.width || newHead.y >= size.height {
+            endGame()
             return
         }
         
-        snake.insert((newHead.0, newHead.1), at: 0)
+        if snake.contains(newHead) {
+            endGame()
+            return
+        }
         
-        // Еда
-        if let f = food, f.0 == newHead.0 && f.1 == newHead.1 {
+        snake.insert(newHead, at: 0)
+        
+        if newHead == food.position {
             score += 1
+            scoreLabel.text = "Score: \(score)"
             spawnFood()
         } else {
             snake.removeLast()
         }
+        
+        redrawSnake()
     }
     
-    func draw() {
-        removeAllChildren()
+    func redrawSnake() {
+        removeChildren(in: children.filter { $0.name == "snakepart" })
         
-        // Еда
-        if let f = food {
-            let foodNode = SKShapeNode(rectOf: CGSize(width: cellSize, height: cellSize), cornerRadius: 5)
-            foodNode.fillColor = .red
-            foodNode.position = CGPoint(x: f.0, y: f.1)
-            addChild(foodNode)
-        }
-        
-        // Змейка
-        for seg in snake {
-            let node = SKShapeNode(rectOf: CGSize(width: cellSize, height: cellSize), cornerRadius: 6)
-            node.fillColor = snakeColor
-            node.position = CGPoint(x: seg.0, y: seg.1)
-            addChild(node)
+        for part in snake {
+            let n = SKShapeNode(rectOf: CGSize(width: cell, height: cell), cornerRadius: 6)
+            n.position = part
+            n.fillColor = snakeColor
+            n.name = "snakepart"
+            addChild(n)
         }
     }
     
-    func gameOver() {
-        let gameOverLabel = SKLabelNode(text: "GAME OVER")
-        gameOverLabel.fontSize = 48
-        gameOverLabel.fontColor = .red
-        gameOverLabel.position = CGPoint(x: 350, y: 350)
-        addChild(gameOverLabel)
+    func endGame() {
+        gameOver = true
         
-        isPaused = true
+        let label = SKLabelNode(text: "GAME OVER")
+        label.fontName = "Arial-BoldMT"
+        label.fontSize = 52
+        label.position = CGPoint(x: size.width/2, y: size.height/2)
+        addChild(label)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.view?.presentScene(MenuScene(size: self.size),
-                transition: SKTransition.fade(withDuration: 0.5))
-        }
+        let restart = SKLabelNode(text: "Tap to Restart")
+        restart.fontName = "Arial"
+        restart.fontSize = 26
+        restart.position = CGPoint(x: size.width/2, y: size.height/2 - 60)
+        restart.name = "restart"
+        addChild(restart)
     }
     
-    func setDirection(dx: Int, dy: Int) {
-        if dx != -direction.x || dy != -direction.y {
-            direction = (dx, dy)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameOver {
+            let menu = MenuScene(size: size)
+            view?.presentScene(menu, transition: .fade(withDuration: 0.3))
+            return
+        }
+        
+        guard let t = touches.first else { return }
+        let loc = t.location(in: self)
+        
+        let head = snake.first!
+        
+        if abs(loc.x - head.x) > abs(loc.y - head.y) {
+            direction = (loc.x > head.x) ? CGVector(dx: cell, dy: 0) : CGVector(dx: -cell, dy: 0)
+        } else {
+            direction = (loc.y > head.y) ? CGVector(dx: 0, dy: cell) : CGVector(dx: 0, dy: -cell)
         }
     }
 }
