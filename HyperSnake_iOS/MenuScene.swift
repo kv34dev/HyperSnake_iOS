@@ -16,7 +16,7 @@ class MenuScene: SKScene {
 
     
     let difficulties: [String] = ["Easy", "Normal", "Hard"]
-    let difficultySpeeds: [CGFloat] = [0.20, 0.14, 0.08]
+    let difficultySpeeds: [CGFloat] = [0.50, 0.20, 0.10]
     
     var chosenColor = UIColor.green
     var chosenSpeed: CGFloat = 0.14
