@@ -2,6 +2,8 @@
 
 HyperSnake is a classic “Snake” arcade game fully ported to iOS from the original Python/Pygame version. The game is built using **SpriteKit** and supports **portrait orientation only**.
 
+![screenshot](https://github.com/user-attachments/assets/e6a2f4f2-5956-47cd-87e4-b7cd2cfc479e)
+
 ## Features
 
 - Choose your snake color
