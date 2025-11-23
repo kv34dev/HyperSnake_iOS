@@ -27,12 +27,12 @@ class GameScene: SKScene {
         
         scoreLabel.fontName = "Arial-BoldMT"
         scoreLabel.fontSize = 32
-        scoreLabel.position = CGPoint(x: 80, y: size.height - 60)
+        scoreLabel.position = CGPoint(x: 80, y: size.height - 90)
         scoreLabel.text = "Score: 0"
         addChild(scoreLabel)
         
-        let startX = size.width / 2
-        let startY = size.height / 2
+        let startX = round((size.width / 2) / cell) * cell
+        let startY = round((size.height / 2) / cell) * cell
         
         snake = [CGPoint(x: startX, y: startY)]
         
@@ -42,12 +42,15 @@ class GameScene: SKScene {
     func spawnFood() {
         food?.removeFromParent()
         
-        let x = CGFloat(Int.random(in: 0..<Int(size.width / cell))) * cell
-        let y = CGFloat(Int.random(in: 0..<Int(size.height / cell))) * cell
+        let cols = Int(size.width / cell)
+        let rows = Int(size.height / cell)
+        
+        let fx = CGFloat(Int.random(in: 0..<cols)) * cell
+        let fy = CGFloat(Int.random(in: 0..<rows)) * cell
         
         food = SKShapeNode(rectOf: CGSize(width: cell, height: cell), cornerRadius: 6)
         food.fillColor = UIColor(red: 1, green: 0.27, blue: 0.27, alpha: 1)
-        food.position = CGPoint(x: x, y: y)
+        food.position = CGPoint(x: fx, y: fy)
         addChild(food)
     }
     
@@ -62,9 +65,11 @@ class GameScene: SKScene {
     
     func moveSnake() {
         let head = snake.first!
-        let newHead = CGPoint(x: head.x + direction.dx, y: head.y + direction.dy)
+        let newHead = CGPoint(x: head.x + direction.dx,
+                              y: head.y + direction.dy)
         
-        if newHead.x < 0 || newHead.y < 0 || newHead.x >= size.width || newHead.y >= size.height {
+        if newHead.x < 0 || newHead.y < 0 ||
+            newHead.x >= size.width || newHead.y >= size.height {
             endGame()
             return
         }
@@ -76,10 +81,13 @@ class GameScene: SKScene {
         
         snake.insert(newHead, at: 0)
         
-        if newHead == food.position {
+        if newHead.x == food.position.x &&
+            newHead.y == food.position.y {
+            
             score += 1
             scoreLabel.text = "Score: \(score)"
             spawnFood()
+            
         } else {
             snake.removeLast()
         }
@@ -129,9 +137,11 @@ class GameScene: SKScene {
         let head = snake.first!
         
         if abs(loc.x - head.x) > abs(loc.y - head.y) {
-            direction = (loc.x > head.x) ? CGVector(dx: cell, dy: 0) : CGVector(dx: -cell, dy: 0)
+            direction = loc.x > head.x ? CGVector(dx: cell, dy: 0)
+                                       : CGVector(dx: -cell, dy: 0)
         } else {
-            direction = (loc.y > head.y) ? CGVector(dx: 0, dy: cell) : CGVector(dx: 0, dy: -cell)
+            direction = loc.y > head.y ? CGVector(dx: 0, dy: cell)
+                                       : CGVector(dx: 0, dy: -cell)
         }
     }
 }
