@@ -21,15 +21,41 @@ HyperSnake is a classic “Snake” arcade game fully ported to iOS from the ori
 - **START button** launches the game.
 - After Game Over, **tap the screen** to return to the menu.
 
-## How to Install & Run
+# Apple Watch Companion App
+
+HyperSnake also includes a fully featured **Apple Watch Edition**, built with SwiftUI and optimized for all modern Apple Watch sizes. This version faithfully recreates the classic HyperSnake experience with:
+
+
+![photo-output](https://github.com/user-attachments/assets/6476af88-6e80-460c-a95b-4cfc496ecc9b)
+
+- Color selection (9 snake colors)  
+- Easy / Normal / Hard difficulty levels  
+- Smooth timer-based gameplay  
+- **Digital Crown controls** for precise turning  
+- Scrollable menus using the Crown  
+
+The WatchOS app is included in the project and can be built and run directly on a real watch or simulator. It is a complete, independent port of the original Python game designed specifically for the Apple Watch interface.
+
+### Digital Crown-Based Movement 
+Control the snake by rotating the Digital Crown on your Apple Watch: 
+
+- Rotate clockwise → turn the snake 90° clockwise
+- Rotate counterclockwise → turn the snake 90° counterclockwise
+
+Each rotation of the crown corresponds to a single turn of the snake.
+
+# How to Install & Run
 
 1. Clone the repository:
 ```
-git clone https://github.com/kv34dev/HyperSnake_WatchOS
+git clone https://github.com/kv34dev/HyperSnake_iOS
 ```
 2. Open the project in Xcode.
-3. Connect your Apple Watch or use an Apple Watch simulator.
-4. Build & Run the WatchOS target.
+3. Select the target you want to run:
+   - **HyperSnake_iOS** for iPhone or iPad  
+   - **HyperSnake_WatchOS** for Apple Watch  
+4. Connect your device (iPhone, iPad, or Apple Watch) or use the appropriate simulator.
+5. Build & Run the selected target.
 
 
 ## Project Structure
