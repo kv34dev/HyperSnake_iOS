@@ -35,6 +35,19 @@ git clone https://github.com/kv34dev/HyperSnake_WatchOS
 ## Project Structure
 ```
 HyperSnake_iOS.xcodeproj/
+HyperSanake_WatchOS Watch App
+├── Assets.xcassets
+│   ├── AccentColor.colorset
+│   │   └── Contents.json
+│   └── AppIcon.appiconset
+│       ├── Contents.json
+│       └── icon.png
+├── Contents.json
+├── ColorSelectionView.swift
+├── ContentView.swift
+├── DifficultyView.swift
+├── GameView.swift
+└── HyperSanake_WatchOSApp.swift
 HyperSnake_iOS/
 ├─ Assets.xcassets/
 │   ├─ Contents.json
